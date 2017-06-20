@@ -134,7 +134,7 @@
 				Command="{Binding RefreshCommand}" />
 			<Button
 				Margin="5"
-				Content="Copy a list of all songs (without duplicate) to clipboard"
+				Content="Copy a list of all songs (without duplicates) to clipboard"
 				Command="{Binding CopySongListToClipboardCommand}"></Button>
 		</StackPanel>
 	</Grid>
