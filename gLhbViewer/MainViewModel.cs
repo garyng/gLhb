@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using gLhb.Parser;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -18,6 +20,8 @@ namespace gLhbViewer
 		private readonly IDialogCoordinator _dialogCoordinator;
 
 		public RelayCommand RefreshCommand { get; set; }
+		public RelayCommand<string> CopySongTitleToClipboardCommand { get; set; }
+		public RelayCommand CopySongListToClipboardCommand { get; set; }
 
 		private ObservableCollection<Lhb> _lhbs;
 
@@ -35,7 +39,15 @@ namespace gLhbViewer
 			set { Set(ref _selectedLhb, value); }
 		}
 
-		
+		private ObservableCollection<SongInfo> _songList;
+
+		public ObservableCollection<SongInfo> SongList
+		{
+			get { return _songList; }
+			set { Set(ref _songList, value); }
+		}
+
+
 		public MainViewModel(IDialogCoordinator dialogCoordinator)
 		{
 			_dialogCoordinator = dialogCoordinator;
@@ -44,13 +56,22 @@ namespace gLhbViewer
 				if (await FetchFromWeb())
 				{
 					await Parse();
+					CopySongListToClipboardCommand.RaiseCanExecuteChanged();
 				}
 			});
-
+			CopySongTitleToClipboardCommand = new RelayCommand<string>(CopyToClipboard);
+			CopySongListToClipboardCommand = new RelayCommand(() =>
+			{
+				string data = GetAllSongs(_lhbs.ToList())
+					.Select(info => $"{info.Title} ({info.Artist})")
+					.Distinct()
+					.Join(Environment.NewLine);
+				CopyToClipboard(data);
+			}, () => Lhbs?.Count >= 0);
 #if DEBUG
 			if (IsInDesignMode)
 			{
-				Lhbs = new ObservableCollection<Lhb>
+				List<Lhb> lhbs = new List<Lhb>
 				{
 					new Lhb()
 					{
@@ -101,18 +122,27 @@ namespace gLhbViewer
 						}
 					}
 				};
+				Lhbs = new ObservableCollection<Lhb>(lhbs);
 				SelectedLhb = Lhbs.First();
+				SongList = new ObservableCollection<SongInfo>(GetAllSongs(lhbs));
 			}
 #endif
+		}
+
+		private void CopyToClipboard(string data)
+		{
+			Clipboard.Clear();
+			Clipboard.SetText(data);
 		}
 
 		private async Task<bool> FetchFromWeb()
 		{
 			WebClient wc = new WebClient();
+
 			ProgressDialogController controller =
 				await _dialogCoordinator.ShowProgressAsync(this, "Fetching...", "Fetching latest data... Please wait...");
-			controller.SetIndeterminate();
 
+			controller.SetIndeterminate();
 			try
 			{
 				await wc.DownloadFileTaskAsync(
@@ -147,6 +177,14 @@ namespace gLhbViewer
 			List<Lhb> lhbs = await Task.Run(() => lhbParser.Parse(_filename));
 			await controller.CloseAsync();
 			Lhbs = new ObservableCollection<Lhb>(lhbs);
+			SongList = new ObservableCollection<SongInfo>(GetAllSongs(lhbs));
+		}
+
+		private IEnumerable<SongInfo> GetAllSongs(List<Lhb> lhbs)
+		{
+			return lhbs
+				.SelectMany(lhb => lhb.Songs.Select(song => song.Info))
+				.Distinct();
 		}
 	}
 }
