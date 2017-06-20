@@ -13,18 +13,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using gLhb.Parser;
+using MahApps.Metro.Controls;
 
 namespace gLhbViewer
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow
 	{
 		public MainWindow()
 		{
 			InitializeComponent();
-			var lhbs = new LhbParser().Parse("Y.E.S. 93.3 醉心龙虎榜.xlsx");
 		}
 	}
 }

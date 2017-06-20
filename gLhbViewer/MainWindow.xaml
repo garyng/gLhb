@@ -1,12 +1,100 @@
-﻿<Window x:Class="gLhbViewer.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:gLhbViewer"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
-</Window>
+﻿<controls:MetroWindow x:Class="gLhbViewer.MainWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:local="clr-namespace:gLhbViewer"
+                      xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      mc:Ignorable="d"
+                      WindowStartupLocation="CenterScreen"
+                      DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}"
+                      dialog:DialogParticipation.Register="{Binding}"
+                      Title="Y.E.S. 93.3 醉心龙虎榜" Height="700" Width="525">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<ListBox
+			Margin="5"
+			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			ItemsSource="{Binding Lhbs}"
+			SelectedIndex="0"
+			SelectedItem="{Binding SelectedLhb}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock
+						Padding="10"
+						TextWrapping="Wrap"
+						Text="{Binding Info}" />
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<ListBox
+			Grid.Row="0"
+			Grid.Column="1"
+			ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			ItemsSource="{Binding SelectedLhb.Songs}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+						<TextBlock
+							Padding="5"
+							FontSize="{DynamicResource HeaderFontSize}"
+							ToolTip="This week rank"
+							HorizontalAlignment="Right"
+							VerticalAlignment="Center"
+							Text="{Binding Rank.ThisWeekRank}" />
+						<TextBlock
+							Grid.Row="1"
+							Grid.Column="0"
+							Padding="5"
+							ToolTip="Last week rank"
+							VerticalAlignment="Bottom"
+							HorizontalAlignment="Center"
+							Opacity="0.5"
+							Text="{Binding Rank.LastWeekRank}" />
+						<TextBlock
+							Grid.Row="0"
+							Grid.Column="1"
+							Padding="10 5"
+							VerticalAlignment="Center"
+							TextWrapping="Wrap"
+							FontSize="{DynamicResource DialogTitleFontSize}"
+							FontFamily="{DynamicResource HeaderFontFamily}"
+							Text="{Binding Info.Title}" />
+						<TextBlock
+							Grid.Column="1"
+							Grid.Row="1"
+							TextWrapping="Wrap"
+							Padding="10 5"
+							Opacity="0.5"
+							Text="{Binding Info.Artist}" />
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Button
+			Grid.Row="1"
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			Margin="5"
+			Content="Refresh"
+			Command="{Binding RefreshCommand}" />
+	</Grid>
+</controls:MetroWindow>

@@ -9,7 +9,7 @@ namespace gLhb.Parser
 
 		public override string ToString()
 		{
-			return $"{Date:MM/dd/yyyy} #{Week}\n";
+			return $"{Date:MM/dd/yyyy} #{Week}";
 		}
 	}
 }

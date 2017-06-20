@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace gLhb.Parser
 {
+	/// <summary>
+	/// Lhb means "Áú»¢°ñ"
+	/// </summary>
 	public class Lhb
 	{
 		public LhbInfo Info { get; set; }

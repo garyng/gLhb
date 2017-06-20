@@ -49,15 +49,6 @@ namespace gLhb.Parser
 				.ToList();
 		}
 
-		public List<SongInfo> GetAllSongs(string filename)
-		{
-			return Parse(filename)
-				.SelectMany(lhb => lhb.Songs)
-				.Select(song => song.Info)
-				.Distinct()
-				.ToList();
-		}
-
 		private Lhb ExtractFromRange(IXLRange range)
 		{
 			if (range.Rows()
